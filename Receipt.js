@@ -1,12 +1,16 @@
-
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import React, { useState, useEffect } from 'react';
 import '../receipt.css';
 
-const Receipt = ({ show, onHide, order, paymentReceived, customerName, cashierName }) => {
+const Receipt = ({ show, onHide, order = [], paymentReceived = 0, customerName = '', cashierName = '' }) => {
   const [username, setUsername] = useState('');
-  // Calculate total, tax, and other details
+
+  useEffect(() => {
+    const storedUsername = sessionStorage.getItem('username');
+    setUsername(storedUsername || '');
+  }, []);
+
   const calculateTotal = () => {
     return order.reduce((total, item) => total + item.price * item.quantity, 0);
   };
@@ -19,10 +23,6 @@ const Receipt = ({ show, onHide, order, paymentReceived, customerName, cashierNa
   const subtotal = calculateTotal();
   const tax = calculateTax(subtotal);
   const total = subtotal + tax;
-  useEffect(() => {
-    const storedUsername = sessionStorage.getItem('username');
-    setUsername(storedUsername);
-  }, []);
 
   return (
     <Modal show={show} onHide={onHide} dialogClassName="receipt-modal">
